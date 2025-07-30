@@ -215,3 +215,11 @@ export interface SaleState {
   isLoading: boolean;
   error: string | null;
 }
+
+// Root State Type
+export interface RootState {
+  auth: AuthState;
+  products: ProductState;
+  cart: CartState;
+  sales: SaleState;
+}

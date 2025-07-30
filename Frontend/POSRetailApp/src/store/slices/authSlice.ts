@@ -121,11 +121,11 @@ const authSlice = createSlice({
 
 export const { clearError, setUser, clearAuth } = authSlice.actions;
 
-// Selectors
-export const selectUser = (state: { auth: AuthState }) => state.auth.user;
-export const selectIsAuthenticated = (state: { auth: AuthState }) => !!state.auth.user;
-export const selectAuthLoading = (state: { auth: AuthState }) => state.auth.isLoading;
-export const selectAuthError = (state: { auth: AuthState }) => state.auth.error;
-export const selectUserRole = (state: { auth: AuthState }) => state.auth.user?.role;
+// Selectors - Fixed to match actual store structure
+export const selectUser = (state: any) => state.auth.user;
+export const selectIsAuthenticated = (state: any) => !!state.auth.user;
+export const selectAuthLoading = (state: any) => state.auth.isLoading;
+export const selectAuthError = (state: any) => state.auth.error;
+export const selectUserRole = (state: any) => state.auth.user?.role;
 
 export default authSlice.reducer;

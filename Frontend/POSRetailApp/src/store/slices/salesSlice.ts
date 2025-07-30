@@ -125,10 +125,10 @@ const salesSlice = createSlice({
 
 export const { clearError, clearCurrentSale } = salesSlice.actions;
 
-// Selectors
-export const selectSales = (state: { sales: SaleState }) => state.sales.sales;
-export const selectCurrentSale = (state: { sales: SaleState }) => state.sales.currentSale;
-export const selectSalesLoading = (state: { sales: SaleState }) => state.sales.isLoading;
-export const selectSalesError = (state: { sales: SaleState }) => state.sales.error;
+// Selectors - Fixed to match actual store structure
+export const selectSales = (state: any) => state.sales.sales;
+export const selectCurrentSale = (state: any) => state.sales.currentSale;
+export const selectSalesLoading = (state: any) => state.sales.isLoading;
+export const selectSalesError = (state: any) => state.sales.error;
 
 export default salesSlice.reducer;

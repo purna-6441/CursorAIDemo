@@ -198,11 +198,11 @@ const productSlice = createSlice({
 
 export const { clearError, setCurrentProduct, clearCurrentProduct } = productSlice.actions;
 
-// Selectors
-export const selectProducts = (state: { products: ProductState }) => state.products.products;
-export const selectCurrentProduct = (state: { products: ProductState }) => state.products.currentProduct;
-export const selectCategories = (state: { products: ProductState }) => state.products.categories;
-export const selectProductsLoading = (state: { products: ProductState }) => state.products.isLoading;
-export const selectProductsError = (state: { products: ProductState }) => state.products.error;
+// Selectors - Fixed to match actual store structure
+export const selectProducts = (state: any) => state.products.products;
+export const selectCurrentProduct = (state: any) => state.products.currentProduct;
+export const selectCategories = (state: any) => state.products.categories;
+export const selectProductsLoading = (state: any) => state.products.isLoading;
+export const selectProductsError = (state: any) => state.products.error;
 
 export default productSlice.reducer;
