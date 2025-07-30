@@ -11,10 +11,10 @@ const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
-    addItem: (state, action: PayloadAction<{ product: Product; quantity?: number }>) => {
-      const { product, quantity = 1 } = action.payload;
+    addItem: (state, action: PayloadAction<{ product: Product; quantity: number }>) => {
+      const { product, quantity } = action.payload;
       const existingItem = state.items.find(item => item.product.id === product.id);
-
+      
       if (existingItem) {
         existingItem.quantity += quantity;
       } else {
@@ -24,109 +24,116 @@ const cartSlice = createSlice({
           discountAmount: 0,
         });
       }
-
-      recalculateTotal(state);
+      
+      // Recalculate totals
+      const subtotal = state.items.reduce((sum, item) => {
+        const itemTotal = (item.product.price * item.quantity) - item.discountAmount;
+        return sum + itemTotal;
+      }, 0);
+      state.total = Math.max(0, subtotal - state.discountAmount);
     },
-
+    
     removeItem: (state, action: PayloadAction<number>) => {
-      const productId = action.payload;
-      state.items = state.items.filter(item => item.product.id !== productId);
-      recalculateTotal(state);
+      state.items = state.items.filter(item => item.product.id !== action.payload);
+      
+      // Recalculate totals
+      const subtotal = state.items.reduce((sum, item) => {
+        const itemTotal = (item.product.price * item.quantity) - item.discountAmount;
+        return sum + itemTotal;
+      }, 0);
+      state.total = Math.max(0, subtotal - state.discountAmount);
     },
-
-    updateQuantity: (state, action: PayloadAction<{ productId: number; quantity: number }>) => {
-      const { productId, quantity } = action.payload;
-      const item = state.items.find(item => item.product.id === productId);
-
-      if (item) {
-        if (quantity <= 0) {
-          state.items = state.items.filter(item => item.product.id !== productId);
-        } else {
-          item.quantity = quantity;
-        }
+    
+    incrementQuantity: (state, action: PayloadAction<number>) => {
+      const item = state.items.find(item => item.product.id === action.payload);
+      if (item && item.quantity < item.product.quantity) {
+        item.quantity += 1;
+        
+        // Recalculate totals
+        const subtotal = state.items.reduce((sum, item) => {
+          const itemTotal = (item.product.price * item.quantity) - item.discountAmount;
+          return sum + itemTotal;
+        }, 0);
+        state.total = Math.max(0, subtotal - state.discountAmount);
       }
-
-      recalculateTotal(state);
     },
-
+    
+    decrementQuantity: (state, action: PayloadAction<number>) => {
+      const item = state.items.find(item => item.product.id === action.payload);
+      if (item && item.quantity > 1) {
+        item.quantity -= 1;
+        
+        // Recalculate totals
+        const subtotal = state.items.reduce((sum, item) => {
+          const itemTotal = (item.product.price * item.quantity) - item.discountAmount;
+          return sum + itemTotal;
+        }, 0);
+        state.total = Math.max(0, subtotal - state.discountAmount);
+      } else if (item && item.quantity === 1) {
+        // Remove item if quantity becomes 0
+        state.items = state.items.filter(item => item.product.id !== action.payload);
+        
+        // Recalculate totals
+        const subtotal = state.items.reduce((sum, item) => {
+          const itemTotal = (item.product.price * item.quantity) - item.discountAmount;
+          return sum + itemTotal;
+        }, 0);
+        state.total = Math.max(0, subtotal - state.discountAmount);
+      }
+    },
+    
     updateItemDiscount: (state, action: PayloadAction<{ productId: number; discountAmount: number }>) => {
       const { productId, discountAmount } = action.payload;
       const item = state.items.find(item => item.product.id === productId);
-
+      
       if (item) {
         item.discountAmount = Math.max(0, discountAmount);
+        
+        // Recalculate totals
+        const subtotal = state.items.reduce((sum, item) => {
+          const itemTotal = (item.product.price * item.quantity) - item.discountAmount;
+          return sum + itemTotal;
+        }, 0);
+        state.total = Math.max(0, subtotal - state.discountAmount);
       }
-
-      recalculateTotal(state);
     },
-
-    applyCartDiscount: (state, action: PayloadAction<number>) => {
+    
+    updateCartDiscount: (state, action: PayloadAction<number>) => {
       state.discountAmount = Math.max(0, action.payload);
-      recalculateTotal(state);
+      
+      // Recalculate totals
+      const subtotal = state.items.reduce((sum, item) => {
+        const itemTotal = (item.product.price * item.quantity) - item.discountAmount;
+        return sum + itemTotal;
+      }, 0);
+      state.total = Math.max(0, subtotal - state.discountAmount);
     },
-
+    
     clearCart: (state) => {
       state.items = [];
       state.total = 0;
       state.discountAmount = 0;
     },
-
-    incrementQuantity: (state, action: PayloadAction<number>) => {
-      const productId = action.payload;
-      const item = state.items.find(item => item.product.id === productId);
-
-      if (item) {
-        item.quantity += 1;
-        recalculateTotal(state);
-      }
-    },
-
-    decrementQuantity: (state, action: PayloadAction<number>) => {
-      const productId = action.payload;
-      const item = state.items.find(item => item.product.id === productId);
-
-      if (item) {
-        if (item.quantity > 1) {
-          item.quantity -= 1;
-        } else {
-          state.items = state.items.filter(item => item.product.id !== productId);
-        }
-        recalculateTotal(state);
-      }
-    },
   },
 });
-
-// Helper function to recalculate total
-const recalculateTotal = (state: CartState) => {
-  const subtotal = state.items.reduce((sum, item) => {
-    const itemTotal = (item.product.price * item.quantity) - item.discountAmount;
-    return sum + itemTotal;
-  }, 0);
-
-  state.total = Math.max(0, subtotal - state.discountAmount);
-};
 
 export const {
   addItem,
   removeItem,
-  updateQuantity,
-  updateItemDiscount,
-  applyCartDiscount,
-  clearCart,
   incrementQuantity,
   decrementQuantity,
+  updateItemDiscount,
+  updateCartDiscount,
+  clearCart,
 } = cartSlice.actions;
 
-// Selectors
-export const selectCartItems = (state: { cart: CartState }) => state.cart.items;
-export const selectCartTotal = (state: { cart: CartState }) => state.cart.total;
-export const selectCartDiscountAmount = (state: { cart: CartState }) => state.cart.discountAmount;
-export const selectCartItemCount = (state: { cart: CartState }) => 
-  state.cart.items.reduce((count, item) => count + item.quantity, 0);
-export const selectCartSubtotal = (state: { cart: CartState }) => 
-  state.cart.items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
-export const selectCartItemDiscounts = (state: { cart: CartState }) => 
-  state.cart.items.reduce((sum, item) => sum + item.discountAmount, 0);
+// Selectors - Fixed to match actual store structure
+export const selectCartItems = (state: any) => state.cart.items;
+export const selectCartTotal = (state: any) => state.cart.total;
+export const selectCartSubtotal = (state: any) => 
+  state.cart.items.reduce((sum: number, item: CartItem) => sum + (item.product.price * item.quantity), 0);
+export const selectCartDiscountAmount = (state: any) => state.cart.discountAmount;
+export const selectCartItemCount = (state: any) => 
+  state.cart.items.reduce((sum: number, item: CartItem) => sum + item.quantity, 0);
 
 export default cartSlice.reducer;
