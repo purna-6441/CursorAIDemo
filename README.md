@@ -145,6 +145,7 @@ CursorPracticeApp/
 - ✅ Apply discounts (item-level and cart-level)
 - ✅ Payment processing UI (cash/card placeholders)
 - ✅ Receipt generation (PDF)
+- ✅ Cart management with quantity controls
 - 🔄 Offline sales storage and sync (planned)
 
 ### 4. Reporting & Analytics
@@ -278,21 +279,25 @@ npm test
 ## 📱 Mobile App Features
 
 ### Core Screens
-- **Login Screen**: JWT authentication
-- **Dashboard**: Sales overview and quick actions
-- **Sales Screen**: Product selection and cart management
-- **Cart Screen**: Review items, apply discounts
-- **Payment Screen**: Payment method selection (UI only)
-- **Receipt Screen**: Display and share receipts
-- **Inventory Screen**: Product management
-- **Reports Screen**: Analytics and reports
+- **✅ Login Screen**: JWT authentication with form validation
+- **✅ Dashboard**: Sales overview, quick actions, role-based UI
+- **✅ Sales Screen**: Product search, cart management, barcode scanning
+- **✅ Cart Screen**: Item management, quantity controls, discount application
+- **✅ Payment Screen**: Payment method selection (UI placeholder)
+- **✅ Receipt Screen**: Transaction completion (UI placeholder)
+- **✅ Inventory Screen**: Product management (placeholder)
+- **✅ Reports Screen**: Analytics and reports (placeholder)
+- **✅ Profile Screen**: User settings and logout functionality
 
 ### Components
-- Product search and filtering
-- Barcode scanner integration
-- Form validation with react-hook-form
-- Loading states and error handling
-- Role-based UI rendering
+- ✅ Product search and filtering
+- ✅ Form validation with react-hook-form
+- ✅ Loading states and error handling
+- ✅ Role-based UI rendering
+- ✅ Redux state management with async thunks
+- ✅ Navigation with React Navigation v6
+- ✅ Responsive UI with Material Design icons
+- 🔄 Barcode scanner integration (placeholder ready)
 
 ## 🚀 Deployment
 
